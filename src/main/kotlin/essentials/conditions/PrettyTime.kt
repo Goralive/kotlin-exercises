@@ -1,10 +1,51 @@
-package essentials.conditions.prettytime
+package essentials.conditions
 
 import org.junit.Test
 import kotlin.test.assertEquals
 
 fun secondsToPrettyTime(seconds: Int): String {
-    return ""
+    var sec = seconds
+    var minutes = 0
+    var seconds = 0
+    var hours = 0
+    if (sec < 0) {
+        return "Invalid input"
+    }
+
+    if (sec == 0) {
+        return "Now"
+    }
+
+    while (sec > 0) {
+        if (sec - 60 >= 0) {
+            minutes += 1
+            sec -= 60
+        } else {
+            seconds++
+            sec--
+        }
+        if (minutes - 60 >= 0) {
+            hours += 1
+            minutes -= 60
+        }
+    }
+
+    val h = when (hours) {
+        0 -> ""
+        else -> "$hours h "
+    }
+
+    val m = when (minutes) {
+        0 -> ""
+        else -> "$minutes min "
+    }
+
+    val s = when (seconds) {
+        0 -> ""
+        else -> "$seconds sec "
+    }
+
+    return "$h$m$s".trim()
 }
 
 fun main() {
