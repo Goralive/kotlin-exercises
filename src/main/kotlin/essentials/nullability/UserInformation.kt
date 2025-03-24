@@ -1,11 +1,16 @@
-package essentials.nullability.userinformation
+package essentials.nullability
 
 import org.junit.Assert.assertThrows
 import org.junit.Test
 import kotlin.test.assertEquals
 
 fun processUserInformation(user: User?): String {
-    return ""
+    user ?: return "Missing user information"
+    val name = requireNotNull(user.name)
+    val age = user.age ?: 0
+    val email = user.email?.email
+    if (email.isNullOrBlank()) return "Missing email"
+    return "User $name is $age years old, email: $email"
 }
 
 data class EmailAddress(val email: String?)
@@ -19,7 +24,7 @@ data class User(
 fun main() {
     println(processUserInformation(null))
     // Missing user information
-    
+
     val user1 = User(
         "John",
         30,
@@ -27,7 +32,7 @@ fun main() {
     )
     println(processUserInformation(user1))
     // User John is 30 years old, email: john@example.com
-    
+
     val user2 = User(
         "Alice",
         null,
@@ -35,7 +40,7 @@ fun main() {
     )
     println(processUserInformation(user2))
     // User Alice is 0 years old, email: alice@example.com
-    
+
     val user3 = User(
         "Bob",
         25,
@@ -43,7 +48,7 @@ fun main() {
     )
     println(processUserInformation(user3))
     // Missing email
-    
+
     val user6 = User(
         null,
         40,
