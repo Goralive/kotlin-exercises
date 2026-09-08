@@ -12,31 +12,39 @@ class Inventory {
     private val sellers = mutableSetOf<String>()
 
     fun addProduct(product: Product, producer: String) {
-        // TODO: Add product and assign producer
+        products.add(product)
+        productIdToProducer.put(product.id, producer)
     }
 
     fun removeProduct(product: Product) {
-        // TODO: Remove product and producer
+        products.remove(product)
+        productIdToProducer.remove(product.id)
     }
 
-    fun getProductsCount(): Int = TODO()
+    fun getProductsCount(): Int = products.size
 
-    fun hasProduct(product: Product): Boolean = TODO()
+    fun hasProduct(product: Product): Boolean = product in products
 
-    fun hasProducts(): Boolean = TODO()
+    fun hasProducts(): Boolean = products.isNotEmpty()
 
-    fun getProducer(product: Product): String? = TODO()
+    fun getProducer(product: Product): String? = productIdToProducer.get(product.id)
 
     fun addSeller(seller: String) {
-        // TODO: Add seller
+        sellers.add(seller)
     }
 
     fun removeSeller(seller: String) {
-        // TODO: Remove seller
+        sellers.remove(seller)
     }
 
     fun produceInventoryDisplay(): String {
         var result = "Inventory:\n"
+        for (product in products) {
+            result += "${product.name} (${product.category}) - $${product.price}\n"
+            result += "Produced by: ${getProducer(product)}\n"
+        }
+
+        result += "Sellers: $sellers"
         // TODO: For each product, print name, category, price
         // in the format "{name} ({category}) - ${price}"
         // and print the producer in the format
@@ -57,23 +65,23 @@ class Product(
 fun main() {
     val inventory = Inventory()
     println(inventory.hasProducts()) // false
-    
+
     val p1 = Product("P1", "Phone", 599.99, "Electronics")
     val p2 = Product("P2", "Laptop", 1199.99, "Electronics")
     val p3 = Product("P3", "Shirt", 29.99, "Clothing")
-    
+
     inventory.addProduct(p1, "TechCompany")
     inventory.addProduct(p2, "TechCompany")
     inventory.addProduct(p3, "ClothingCompany")
-    
+
     inventory.addSeller("Seller1")
     inventory.addSeller("Seller2")
-    
+
     println(inventory.getProductsCount()) // 3
     println(inventory.hasProduct(p1)) // true
     println(inventory.hasProducts()) // true
     println(inventory.getProducer(p1)) // TechCompany
-    
+
     println(inventory.produceInventoryDisplay())
     // Inventory:
     // Phone (Electronics) - $599.99
@@ -83,17 +91,17 @@ fun main() {
     // Shirt (Clothing) - $29.99
     // Produced by: ClothingCompany
     // Sellers: [Seller1, Seller2]
-    
+
     inventory.removeProduct(p2)
     inventory.addSeller("Seller1")
     inventory.removeSeller("Seller2")
-    
+
     println(inventory.getProductsCount()) // 2
     println(inventory.hasProduct(p1)) // true
     println(inventory.hasProduct(p2)) // false
     println(inventory.hasProducts()) // true
     println(inventory.getProducer(p2)) // null
-    
+
     println(inventory.produceInventoryDisplay())
     // Inventory:
     // Phone (Electronics) - $599.99
@@ -156,9 +164,9 @@ class InventoryTest {
 
         val expectedDisplay = """
             Inventory:
-            Apple (Fruit) - 0.5
+            Apple (Fruit) - $0.5
             Produced by: FruitCorp
-            Banana (Fruit) - 0.3
+            Banana (Fruit) - $0.3
             Produced by: TropicalFruitCorp
             Sellers: [SellerA, SellerB]
         """.trimIndent()

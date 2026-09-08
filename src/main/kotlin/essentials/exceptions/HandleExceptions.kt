@@ -4,7 +4,15 @@ fun main() {
     while (true) {
         // Wrap below function call with try-catching block,
         // and handle possible exceptions.
-        handleInput()
+        try {
+             handleInput()
+        } catch (e: NumberFormatException) {
+            println("Invalid Input: ${e.message}")
+        } catch (e: ArithmeticException) {
+            println("Division by zero")
+        } catch (e: IllegalOperatorException) {
+            println("Illegal operation: ${e.operator} ")
+        }
     }
 }
 
