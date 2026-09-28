@@ -22,11 +22,22 @@ fun main() {
     val f2 = Centimeter::times
     val f3 = Centimeter::value
     val f4 = Centimeter::toString
-    val f5 = Centimeter(1.0)::plus
-    val f6 = Centimeter(2.0)::times
-    val f7 = Centimeter(3.0)::value
-    val f8 = Centimeter(4.0)::toString
+    val f5 = Centimeter(1.0)::plus // 2
+    val f6 = Centimeter(2.0)::times // 4 // 4
+    val f7 = Centimeter(3.0)::value //3
+    val f8 = Centimeter(4.0)::toString // "4 cm"
     val f9 = Int::cm
-    val f10 = 123::cm
+    val f10 = 123::cm /// 123.00
     val f11 = ::distance
+    println("result for number f1 $f1")
+    println("result for number f2 $f2")
+    println("result for number f3 $f3")
+    println("result for number f4 $f4")
+    println("result for number f5 $f5")
+    println("result for number f6 $f6")
+    println("result for number f7 $f7")
+    println("result for number f8 $f8")
+    println("result for number f9 $f9")
+    println("result for number f10 $f10")
+    println("result for number f11 $f11")
 }
