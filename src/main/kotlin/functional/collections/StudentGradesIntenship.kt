@@ -1,56 +1,69 @@
 package functional.collections.studentgradesintenship
 
+import jdk.internal.org.jline.utils.Colors.s
 import org.junit.Test
-import java.util.Collections
+import java.util.function.ToDoubleBiFunction
 import kotlin.random.Random
 import kotlin.test.assertEquals
 
 fun List<StudentGrades>.getBestForScholarship(
     semester: String
-): List<StudentGrades> {
-    val students = this
-    var candidates = mutableListOf<StudentGrades>()
-    for (s in students) {
-        var ectsPointsGained = 0
-        for (g in s.grades) {
-            if (g.semester == semester && g.passing) {
-                ectsPointsGained += g.ects
-            }
+): List<StudentGrades> = this
+    .filter { sg ->
+        sg.grades.filter { grade ->
+            grade.passing && grade.semester == semester
         }
-        if (ectsPointsGained > 30) {
-            candidates.add(s)
-        }
+            .sumOf { it.ects } > 30
     }
-    Collections.sort(candidates, { s1, s2 ->
-        val difference =
-            averageGradeFromSemester(s2, semester) -
-                    averageGradeFromSemester(s1, semester)
-        if (difference > 0) 1 else -1
-    })
-    val best = mutableListOf<StudentGrades>()
-    for (i in 0 until 10) {
-        val next = candidates.getOrNull(i)
-        if (next != null) {
-            best.add(next)
-        }
-    }
-    return best
-}
+    .sortedByDescending { averageGradeFromSemester(it, semester) }
+    .take(10)
+
+//    val students = this
+//    var candidates = mutableListOf<StudentGrades>()
+//    for (s in students) {
+//        var ectsPointsGained = 0
+//        for (g in s.grades) {
+//            if (g.semester == semester && g.passing) {
+//                ectsPointsGained += g.ects
+//            }
+//        }
+//        if (ectsPointsGained > 30) {
+//            candidates.add(s)
+//        }
+//    }
+//    Collections.sort(candidates, { s1, s2 ->
+//        val difference =
+//            averageGradeFromSemester(s2, semester) -
+//                    averageGradeFromSemester(s1, semester)
+//        if (difference > 0) 1 else -1
+//    })
+//    val best = mutableListOf<StudentGrades>()
+//    for (i in 0 until 10) {
+//        val next = candidates.getOrNull(i)
+//        if (next != null) {
+//            best.add(next)
+//        }
+//    }
+//    return best
+
 
 private fun averageGradeFromSemester(
     student: StudentGrades,
     semester: String
-): Double {
-    var sum = 0.0
-    var count = 0
-    for (g in student.grades) {
-        if (g.semester == semester) {
-            sum += g.grade
-            count++
-        }
-    }
-    return sum / count
-}
+): Double = student.grades
+    .filter { it.semester == semester }
+    .map { it.grade }
+    .average()
+
+//    var sum = 0.0
+//    var count = 0
+//    for (g in student.grades) {
+//        if (g.semester == semester) {
+//            sum += g.grade
+//            count++
+//        }
+//    }
+//    return sum / count
 
 data class Grade(
     val passing: Boolean,
@@ -153,7 +166,7 @@ class StudentGradesIntenshipTest {
                     Grade(true, 50, "Semester 4", 1.0),
                 )
             ),
-            StudentGrades("S3", listOf(Grade(true, 50, "Semester 1", 5.0),)),
+            StudentGrades("S3", listOf(Grade(true, 50, "Semester 1", 5.0))),
         )
 
         assertEquals(
@@ -188,33 +201,39 @@ class StudentGradesIntenshipTest {
     fun `should calculate average grade from semester`() {
         assertEquals(
             3.0,
-            averageGradeFromSemester(StudentGrades(
-                "S1",
-                listOf(
-                    Grade(true, 25, "Semester 1", 3.0),
-                    Grade(true, 25, "Semester 1", 3.0),
-                )
-            ), "Semester 1")
+            averageGradeFromSemester(
+                StudentGrades(
+                    "S1",
+                    listOf(
+                        Grade(true, 25, "Semester 1", 3.0),
+                        Grade(true, 25, "Semester 1", 3.0),
+                    )
+                ), "Semester 1"
+            )
         )
         assertEquals(
             3.0,
-            averageGradeFromSemester(StudentGrades(
-                "S1",
-                listOf(
-                    Grade(true, 10, "Semester 1", 2.0),
-                    Grade(true, 20, "Semester 1", 4.0),
-                )
-            ), "Semester 1")
+            averageGradeFromSemester(
+                StudentGrades(
+                    "S1",
+                    listOf(
+                        Grade(true, 10, "Semester 1", 2.0),
+                        Grade(true, 20, "Semester 1", 4.0),
+                    )
+                ), "Semester 1"
+            )
         )
         assertEquals(
             2.0,
-            averageGradeFromSemester(StudentGrades(
-                "S1",
-                listOf(
-                    Grade(true, 10, "Semester 1", 2.0),
-                    Grade(true, 20, "Semester 2", 4.0),
-                )
-            ), "Semester 1")
+            averageGradeFromSemester(
+                StudentGrades(
+                    "S1",
+                    listOf(
+                        Grade(true, 10, "Semester 1", 2.0),
+                        Grade(true, 20, "Semester 2", 4.0),
+                    )
+                ), "Semester 1"
+            )
         )
     }
 }

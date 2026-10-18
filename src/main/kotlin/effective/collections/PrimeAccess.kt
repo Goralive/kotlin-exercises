@@ -6,8 +6,14 @@ import kotlin.system.measureTimeMillis
 class PrimeAccessRepository(
     private val primeAccessList: PrimeAccessList
 ) {
-    fun isOnAllowList(userId: String): Boolean = TODO()
-    fun isOnDenyList(userId: String): Boolean = TODO()
+    private val associatedList = primeAccessList.entries.associateBy { it.userId }
+    fun isOnAllowList(userId: String): Boolean = associatedList[userId]
+        ?.allowList
+        ?: false
+
+    fun isOnDenyList(userId: String): Boolean = associatedList[userId]
+        ?.denyList
+        ?: false
 }
 
 class PrimeAccessList(
@@ -19,7 +25,14 @@ class PrimeAccessEntry(
     val allowList: Boolean,
     val denyList: Boolean,
 )
+//Class creation took 1 ms
+//Operation took 3616 ms
+//Operation took 3328 ms
 
+//AssociatedList
+//Class creation took 41 ms
+//Operation took 3 ms
+//Operation took 1 m
 fun main() {
     val entries = List(200_000) {
         PrimeAccessEntry(
